@@ -1,8 +1,8 @@
 import express from "express"
 import cors from "cors"
 import  tradeRoutes from "./routes/tradeRoutes.js"
-
-console.log("tradeRoutes:", tradeRoutes)
+import authRoutes from "./routes/authRoutes.js";
+import dashBoardRoutes from "./routes/dashboardRoutes.js";
 
 const app = express()
 
@@ -10,12 +10,14 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+app.use('/api/auth', authRoutes);
 
 app.get("/", (req, res) => {
     res.json({message: "Trade Journal API is running!"})
 });
 
 app.use("/api/trades", tradeRoutes);
+app.use("/api/dashboard", dashBoardRoutes);
 
 export default app;
 
