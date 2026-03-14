@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getTrades, createTrade, updateTrade, deleteTrade } from './services/tradeService';
+import { getTrades, createTrade } from './services/tradeService';
+//import { getTrades, createTrade, updateTrade, deleteTrade } from './services/tradeService';
 import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
 import { isAuthenticated, signout } from './services/authService';
@@ -48,12 +49,6 @@ const globalStyles = `
   .badge-closed { background: rgba(255,255,255,0.04); color: var(--text2); border: 1px solid var(--border2); }
 `;
 
-const SAMPLE_TRADES = [
-  { id:"1", pair:"EUR/USD", direction:"LONG", entryPrice:1.0842, exitPrice:1.0921, stopLoss:1.0800, takeProfit:1.0950, positionSize:0.5, riskPercent:1.0, pnl:395, rMultiple:1.88, strategy:"Breakout", timeframe:"H4", session:"London", marketCondition:"Trending", confidence:8, notes:"Clean breakout above key resistance. Held through NY session.", mistakes:null, status:"CLOSED", openedAt:"2025-03-10T09:30:00Z", closedAt:"2025-03-10T16:45:00Z" },
-  { id:"2", pair:"GBP/JPY", direction:"SHORT", entryPrice:190.25, exitPrice:189.10, stopLoss:190.90, takeProfit:188.80, positionSize:0.3, riskPercent:1.5, pnl:345, rMultiple:1.77, strategy:"Mean Reversion", timeframe:"H1", session:"Tokyo", marketCondition:"Ranging", confidence:7, notes:"Overbought on RSI, clear supply zone.", mistakes:null, status:"CLOSED", openedAt:"2025-03-11T02:00:00Z", closedAt:"2025-03-11T07:20:00Z" },
-  { id:"3", pair:"XAU/USD", direction:"LONG", entryPrice:2318.50, exitPrice:null, stopLoss:2300.00, takeProfit:2360.00, positionSize:0.1, riskPercent:1.0, pnl:null, rMultiple:null, strategy:"Trend Follow", timeframe:"D1", session:"New York", marketCondition:"Trending", confidence:9, notes:"Daily bullish engulfing after pullback to key support.", mistakes:null, status:"OPEN", openedAt:"2025-03-12T14:00:00Z", closedAt:null },
-  { id:"4", pair:"USD/CAD", direction:"LONG", entryPrice:1.3560, exitPrice:1.3510, stopLoss:1.3490, takeProfit:1.3660, positionSize:0.4, riskPercent:1.0, pnl:-200, rMultiple:-0.71, strategy:"Breakout", timeframe:"M15", session:"New York", marketCondition:"Volatile", confidence:5, notes:"FOMC news spike stopped me out.", mistakes:"Traded during high-impact news event", status:"CLOSED", openedAt:"2025-03-09T18:00:00Z", closedAt:"2025-03-09T18:45:00Z" },
-];
 
 const fmt = (n, d=2) => n==null ? "—" : (n>0?"+":"")+Number(n).toFixed(d);
 const fmtPnl = (n) => n==null ? "—" : `${n>0?"+":"-"}$${Math.abs(n).toLocaleString()}`;
