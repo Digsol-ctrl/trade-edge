@@ -5,12 +5,12 @@ import express from 'express';
      updateTrade,
      deleteTrade
  } from '../controllers/tradeController.js'; */
-import { createTrade } from '../controllers/tradeController.js'
+import { getTrades, createTrade } from '../controllers/tradeController.js'
 import protect from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-//router.get('/', protect, getTrades);
+router.get('/', protect, getTrades);
 router.post('/', protect, createTrade);
 //router.put('/:id', protect, updateTrade);
 //router.delete('/:id', protect, deleteTrade);
