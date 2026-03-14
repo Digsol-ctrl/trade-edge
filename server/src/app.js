@@ -6,16 +6,15 @@ import dashBoardRoutes from "./routes/dashboardRoutes.js";
 
 const app = express()
 
+app.get("/", (req, res) => {
+    res.json({message: "Trade Journal API is running!"})
+});
+
 //Middleware
 app.use(cors())
 app.use(express.json())
 
 app.use('/api/auth', authRoutes);
-
-app.get("/", (req, res) => {
-    res.json({message: "Trade Journal API is running!"})
-});
-
 app.use("/api/trades", tradeRoutes);
 app.use("/api/dashboard", dashBoardRoutes);
 
