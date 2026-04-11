@@ -8,9 +8,14 @@ export const signup = async (name, email, password) => {
       email,
       password
     });
-    // Save token to localStorage
+    // Save token and user data to localStorage
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify({
+        _id: response.data._id,
+        name: response.data.name,
+        email: response.data.email
+      }));
     }
     return response.data;
   } catch (error) {
@@ -26,9 +31,14 @@ export const signin = async (email, password) => {
       email,
       password
     });
-    // Save token to localStorage
+    // Save token and user data to localStorage
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify({
+        _id: response.data._id,
+        name: response.data.name,
+        email: response.data.email
+      }));
     }
     return response.data;
   } catch (error) {
@@ -40,9 +50,16 @@ export const signin = async (email, password) => {
 // Sign out - logout
 export const signout = () => {
   localStorage.removeItem('token');
+  localStorage.removeItem('user');
 };
 
 // Check if user is logged in
 export const isAuthenticated = () => {
   return !!localStorage.getItem('token');
+};
+
+// Get current user data
+export const getCurrentUser = () => {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
 };

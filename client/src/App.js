@@ -5,7 +5,7 @@ import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
 import HomePage from './components/HomePage';
 import Footer from './components/Footer';
-import { isAuthenticated, signout } from './services/authService';
+import { isAuthenticated, signout, getCurrentUser } from './services/authService';
 
 const globalStyles = `
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -57,6 +57,21 @@ const fmtPnl = (n) => n==null ? "—" : `${n>0?"+":"-"}$${Math.abs(n).toLocaleSt
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "—";
 
 function Nav({ tab, setTab, onLogout }) {
+  const user = getCurrentUser();
+  
+  // Generate initials from user name
+  const getInitials = (name) => {
+    if (!name) return "?";
+    const parts = name.trim().split(" ");
+    if (parts.length === 1) {
+      return name.charAt(0).toUpperCase();
+    }
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  };
+
+  const initials = getInitials(user?.name);
+  const displayName = user?.name || "User";
+
   return (
     <nav style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", height:64, borderBottom:"1px solid var(--border)", background:"rgba(4,6,15,0.95)", backdropFilter:"blur(12px)", position:"sticky", top:0, zIndex:100 }}>
       <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -70,10 +85,10 @@ function Nav({ tab, setTab, onLogout }) {
         ))}
       </div>
       <div style={{ display:"flex", alignItems:"center", gap:10 }}>
-        <div style={{ width:32, height:32, borderRadius:"50%", background:"linear-gradient(135deg, var(--accent), var(--blue))", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"#000" }}>JD</div>
+        <div style={{ width:32, height:32, borderRadius:"50%", background:"linear-gradient(135deg, var(--accent), var(--blue))", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"#000" }}>{initials}</div>
         <div>
-          <div style={{ fontSize:12, fontWeight:700 }}>John Doe</div>
-          <div style={{ fontSize:10, color:"var(--muted)", fontFamily:"var(--mono)" }}>Pro Plan</div>
+          <div style={{ fontSize:12, fontWeight:700 }}>{displayName}</div>
+          <div style={{ fontSize:10, color:"var(--muted)", fontFamily:"var(--mono)" }}>{user?.email || "user@example.com"}</div>
         </div>
         <button onClick={onLogout} style={{ marginLeft:"20px", padding:"6px 14px", background:"var(--red-dim)", border:"1px solid rgba(244,63,94,0.2)", color:"var(--red)", borderRadius:6, cursor:"pointer", fontFamily:"var(--mono)", fontSize:11, fontWeight:600 }}>Logout</button>
       </div>
