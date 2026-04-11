@@ -68,26 +68,31 @@ export const createTrade = async (req, res) => {
             }
         }
 
+        // Extract screenshot data URLs from objects
+        const screenshotUrls = Array.isArray(screenshots)
+            ? screenshots.map(s => typeof s === 'string' ? s : s.data).filter(Boolean)
+            : [];
+
         const trade = await prisma.trade.create({
             data: {
                 pair,
                 direction,
-                entryPrice,
-                exitPrice,
-                stopLoss,
-                takeProfit,
-                positionSize,
-                riskPercent,
+                entryPrice: parseFloat(entryPrice),
+                exitPrice: exitPrice ? parseFloat(exitPrice) : null,
+                stopLoss: stopLoss ? parseFloat(stopLoss) : null,
+                takeProfit: takeProfit ? parseFloat(takeProfit) : null,
+                positionSize: positionSize ? parseFloat(positionSize) : null,
+                riskPercent: riskPercent ? parseFloat(riskPercent) : null,
                 strategy,
                 timeframe,
                 session,
                 marketCondition,
-                confidence,
+                confidence: confidence ? parseInt(confidence) : null,
                 mistakes,
                 notes,
-                screenshots,
-                openedAt: openedAt || new Date(),
-                closedAt,
+                screenshots: screenshotUrls,
+                openedAt: openedAt ? new Date(openedAt) : new Date(),
+                closedAt: closedAt ? new Date(closedAt) : null,
                 status,
                 pnl,
                 rMultiple,
@@ -96,7 +101,11 @@ export const createTrade = async (req, res) => {
         });
         res.status(201).json(trade);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Trade creation error:', error);
+        res.status(500).json({ 
+            message: error.message,
+            error: process.env.NODE_ENV === 'development' ? error : undefined
+        });
     }
 };
 

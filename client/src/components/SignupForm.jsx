@@ -46,7 +46,7 @@ export default function SignupForm({ onSignupSuccess, onBackToLogin }) {
       alignItems: "center",
       justifyContent: "center",
       padding: "20px",
-      fontFamily: "'Syne', sans-serif"
+      fontFamily: "'Inter', sans-serif"
     }}>
       <div style={{
         background: "#090d1a",
@@ -61,17 +61,17 @@ export default function SignupForm({ onSignupSuccess, onBackToLogin }) {
             width: "48px",
             height: "48px",
             borderRadius: "8px",
-            background: "#00e5a0",
+            background: "#4682B4",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontWeight: "800",
             fontSize: "24px",
-            color: "#000",
+            color: "#fff",
             marginBottom: "16px"
-          }}>T</div>
-          <h1 style={{ fontWeight: "800", fontSize: "24px", marginBottom: "8px", color: "#dde1ef" }}>Get Started</h1>
-          <p style={{ color: "#8892a8", fontSize: "14px" }}>Create your trading journal account</p>
+          }}>◆</div>
+          <h1 style={{ fontWeight: "800", fontSize: "24px", marginBottom: "8px", color: "#dde1ef", fontFamily: "'Space Grotesk', sans-serif" }}>Get Started</h1>
+          <p style={{ color: "#8892a8", fontSize: "14px" }}>Create your Spec King account</p>
         </div>
 
         <form onSubmit={handleSignup}>
@@ -182,9 +182,9 @@ export default function SignupForm({ onSignupSuccess, onBackToLogin }) {
             style={{
               width: "100%",
               padding: "12px",
-              background: "#00e5a0",
+              background: "#4682B4",
               border: "none",
-              color: "#000",
+              color: "#fff",
               borderRadius: "8px",
               fontWeight: "800",
               fontSize: "14px",
@@ -204,10 +204,11 @@ export default function SignupForm({ onSignupSuccess, onBackToLogin }) {
             style={{
               background: "none",
               border: "none",
-              color: "#00e5a0",
+              color: "#4682B4",
               cursor: "pointer",
               textDecoration: "underline",
-              fontSize: "13px"
+              fontSize: "13px",
+              fontFamily: "'Inter', sans-serif"
             }}
           >
             Sign in here

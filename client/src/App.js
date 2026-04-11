@@ -3,10 +3,11 @@ import { getTrades, createTrade } from './services/tradeService';
 //import { getTrades, createTrade, updateTrade, deleteTrade } from './services/tradeService';
 import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
+import HomePage from './components/HomePage';
+import Footer from './components/Footer';
 import { isAuthenticated, signout } from './services/authService';
 
 const globalStyles = `
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
     --bg: #04060f;
@@ -15,9 +16,9 @@ const globalStyles = `
     --surface3: #161d2e;
     --border: rgba(255,255,255,0.05);
     --border2: rgba(255,255,255,0.1);
-    --accent: #00e5a0;
-    --accent-dim: rgba(0,229,160,0.1);
-    --accent-glow: rgba(0,229,160,0.25);
+    --accent: #4682B4;
+    --accent-dim: rgba(70,130,180,0.1);
+    --accent-glow: rgba(70,130,180,0.25);
     --blue: #3b82f6;
     --blue-dim: rgba(59,130,246,0.12);
     --red: #f43f5e;
@@ -26,10 +27,11 @@ const globalStyles = `
     --text: #dde1ef;
     --text2: #8892a8;
     --muted: #3d4660;
-    --font: 'Syne', sans-serif;
+    --font: 'Inter', 'Space Grotesk', sans-serif;
     --mono: 'JetBrains Mono', monospace;
   }
   body { background: var(--bg); color: var(--text); font-family: var(--font); }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', var(--font); }
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
@@ -43,7 +45,7 @@ const globalStyles = `
   select option { background: var(--surface2); }
   label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); display: block; margin-bottom: 6px; }
   .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: var(--mono); letter-spacing: 0.05em; text-transform: uppercase; }
-  .badge-long { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,0.2); }
+  .badge-long { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(70,130,180,0.2); }
   .badge-short { background: var(--red-dim); color: var(--red); border: 1px solid rgba(244,63,94,0.2); }
   .badge-open { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(59,130,246,0.2); }
   .badge-closed { background: rgba(255,255,255,0.04); color: var(--text2); border: 1px solid var(--border2); }
@@ -58,13 +60,13 @@ function Nav({ tab, setTab, onLogout }) {
   return (
     <nav style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 32px", height:64, borderBottom:"1px solid var(--border)", background:"rgba(4,6,15,0.95)", backdropFilter:"blur(12px)", position:"sticky", top:0, zIndex:100 }}>
       <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-        <div style={{ width:32, height:32, borderRadius:8, background:"var(--accent)", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, fontSize:16, color:"#000" }}>T</div>
-        <span style={{ fontWeight:800, fontSize:18, letterSpacing:"-0.02em" }}>TradeEdge</span>
+        <div style={{ width:32, height:32, borderRadius:8, background:"var(--accent)", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, fontSize:16, color:"#000" }}>S</div>
+        <span style={{ fontWeight:800, fontSize:18, letterSpacing:"-0.02em" }}>The Spec King</span>
         <span style={{ fontSize:11, color:"var(--muted)", fontFamily:"var(--mono)", marginLeft:4 }}>v1.0</span>
       </div>
       <div style={{ display:"flex", gap:4 }}>
         {[["journal","📋 Journal"],["calculator","🧮 Calculator"]].map(([key,label]) => (
-          <button key={key} onClick={()=>setTab(key)} style={{ background:tab===key?"var(--accent-dim)":"transparent", border:tab===key?"1px solid rgba(0,229,160,0.3)":"1px solid transparent", color:tab===key?"var(--accent)":"var(--text2)", padding:"7px 18px", borderRadius:8, cursor:"pointer", fontFamily:"var(--font)", fontWeight:600, fontSize:13, transition:"all 0.2s" }}>{label}</button>
+          <button key={key} onClick={()=>setTab(key)} style={{ background:tab===key?"var(--accent-dim)":"transparent", border:tab===key?"1px solid rgba(70,130,180,0.3)":"1px solid transparent", color:tab===key?"var(--accent)":"var(--text2)", padding:"7px 18px", borderRadius:8, cursor:"pointer", fontFamily:"var(--font)", fontWeight:600, fontSize:13, transition:"all 0.2s" }}>{label}</button>
         ))}
       </div>
       <div style={{ display:"flex", alignItems:"center", gap:10 }}>
@@ -159,6 +161,19 @@ function TradeModal({ trade, onClose }) {
           </div>
         </div>
         {trade.notes && <div style={{ background:"var(--surface2)", borderRadius:8, padding:"14px 16px", marginBottom:12 }}><div style={{ fontSize:10, color:"var(--text2)", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:6 }}>Notes</div><div style={{ fontSize:13, lineHeight:1.6 }}>{trade.notes}</div></div>}
+        {trade.screenshots && trade.screenshots.length > 0 && (
+          <div style={{ background:"var(--surface2)", borderRadius:8, padding:"14px 16px", marginBottom:12 }}>
+            <div style={{ fontSize:10, color:"var(--text2)", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10 }}>📸 Screenshots</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(150px, 1fr))", gap:10 }}>
+              {trade.screenshots.map((ss, i) => (
+                <div key={i} style={{ position:"relative" }}>
+                  <img src={ss.data} alt={ss.label} style={{ width:"100%", height:120, objectFit:"cover", borderRadius:6 }} />
+                  <div style={{ fontSize:10, color:"var(--text2)", paddingTop:6, fontWeight:500 }}>{ss.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {trade.mistakes && <div style={{ background:"var(--red-dim)", border:"1px solid rgba(244,63,94,0.2)", borderRadius:8, padding:"14px 16px", marginBottom:16 }}><div style={{ fontSize:10, color:"var(--red)", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:6 }}>⚠ Mistakes</div><div style={{ fontSize:13, lineHeight:1.6 }}>{trade.mistakes}</div></div>}
         <div>
           <div style={{ fontSize:10, color:"var(--text2)", fontWeight:600, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:8 }}>Confidence</div>
@@ -187,7 +202,81 @@ function AddTradeModal({ onClose, onAdd }) {
   const [confidence, setConfidence] = useState(7);
   const [notes, setNotes] = useState("");
   const [mistakes, setMistakes] = useState("");
+  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(false);
+  
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (attachments.length + files.length > 3) {
+      alert("Maximum 3 images allowed");
+      return;
+    }
+    
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAttachments(prev => [...prev, {
+          label: "Image " + (attachments.length + 1),
+          data: event.target.result
+        }]);
+      };
+      reader.readAsDataURL(file);
+    });
+    
+    e.target.value = "";
+  };
+  
+  const handleBasicScreenshot = async () => {
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: { mediaSource: 'screen' } });
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        
+        setTimeout(() => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth || 1920;
+          canvas.height = video.videoHeight || 1080;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(video, 0, 0);
+          
+          // Stop all tracks immediately
+          stream.getTracks().forEach(track => track.stop());
+          
+          const imageData = canvas.toDataURL('image/png');
+          setAttachments(prev => [...prev, {
+            label: "Screenshot " + (prev.length + 1),
+            data: imageData
+          }]);
+          
+          // Return focus to the modal
+          setTimeout(() => {
+            const form = document.querySelector('form');
+            if (form) form.focus();
+          }, 100);
+        }, 500);
+      } else {
+        alert("Screenshot capture is not supported on your browser. Please use Chrome, Edge, or Firefox.");
+      }
+    } catch (error) {
+      if (error.name !== 'NotAllowedError') {
+        console.error('Screenshot error:', error);
+        alert("Screenshot capture failed. Please try uploading an image instead.");
+      }
+    }
+  };
+  
+  const removeAttachment = (index) => {
+    setAttachments(prev => prev.filter((_, i) => i !== index));
+  };
+  
+  const updateAttachmentLabel = (index, label) => {
+    setAttachments(prev => {
+      const updated = [...prev];
+      updated[index].label = label;
+      return updated;
+    });
+  };
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -212,6 +301,7 @@ function AddTradeModal({ onClose, onAdd }) {
       confidence,
       notes: notes || null,
       mistakes: mistakes || null,
+      screenshots: attachments.length > 0 ? attachments : null,
       openedAt: new Date().toISOString(),
       status: "OPEN"
     };
@@ -307,9 +397,117 @@ function AddTradeModal({ onClose, onAdd }) {
             <textarea rows={2} placeholder="What could have been done better?" value={mistakes} onChange={e=>setMistakes(e.target.value)} style={{ width:"100%", padding:"10px", background:"var(--surface3)", border:"1px solid var(--border2)", borderRadius:"6px", color:"var(--text)", fontSize:"13px", fontFamily:"var(--mono)", boxSizing:"border-box", resize:"vertical" }} />
           </div>
 
+          {/* Attachments Section */}
+          <div style={{ marginBottom:20 }}>
+            <label style={{ fontSize:"11px", fontWeight:600, textTransform:"uppercase", color:"var(--text2)", display:"block", marginBottom:"12px" }}>📸 Attachments ({attachments.length}/3)</label>
+            
+            <div style={{ display:"flex", gap:10, marginBottom:14 }}>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleFileUpload}
+                disabled={attachments.length >= 3}
+                style={{ display:"none" }}
+                id="file-input"
+              />
+              <button
+                type="button"
+                onClick={() => document.getElementById('file-input').click()}
+                disabled={attachments.length >= 3 || loading}
+                style={{
+                  flex:1,
+                  padding:"10px",
+                  background:"var(--surface3)",
+                  border:"1px dashed var(--border2)",
+                  color:attachments.length >= 3 ? "var(--muted)" : "var(--text2)",
+                  borderRadius:"6px",
+                  cursor:attachments.length >= 3 ? "not-allowed" : "pointer",
+                  fontFamily:"var(--mono)",
+                  fontSize:"12px",
+                  fontWeight:600,
+                  opacity:attachments.length >= 3 ? 0.5 : 1
+                }}
+              >
+                📁 Upload Image
+              </button>
+              <button
+                type="button"
+                onClick={handleBasicScreenshot}
+                disabled={attachments.length >= 3 || loading}
+                style={{
+                  flex:1,
+                  padding:"10px",
+                  background:"var(--surface3)",
+                  border:"1px dashed var(--border2)",
+                  color:attachments.length >= 3 ? "var(--muted)" : "var(--text2)",
+                  borderRadius:"6px",
+                  cursor:attachments.length >= 3 ? "not-allowed" : "pointer",
+                  fontFamily:"var(--mono)",
+                  fontSize:"12px",
+                  fontWeight:600,
+                  opacity:attachments.length >= 3 ? 0.5 : 1
+                }}
+              >
+                📸 Screenshot
+              </button>
+            </div>
+
+            {attachments.length > 0 && (
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(120px, 1fr))", gap:10 }}>
+                {attachments.map((att, i) => (
+                  <div key={i} style={{ position:"relative" }}>
+                    <img src={att.data} alt={att.label} style={{ width:"100%", height:100, objectFit:"cover", borderRadius:6 }} />
+                    <input
+                      type="text"
+                      value={att.label}
+                      onChange={(e) => updateAttachmentLabel(i, e.target.value)}
+                      placeholder="Label"
+                      style={{
+                        width:"100%",
+                        padding:"4px 6px",
+                        marginTop:"4px",
+                        background:"var(--surface3)",
+                        border:"1px solid var(--border2)",
+                        borderRadius:"4px",
+                        color:"var(--text)",
+                        fontSize:"10px",
+                        fontFamily:"var(--mono)",
+                        boxSizing:"border-box"
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeAttachment(i)}
+                      style={{
+                        position:"absolute",
+                        top:"-8px",
+                        right:"-8px",
+                        width:24,
+                        height:24,
+                        borderRadius:"50%",
+                        background:"var(--red)",
+                        border:"none",
+                        color:"#fff",
+                        cursor:"pointer",
+                        fontSize:14,
+                        fontWeight:700,
+                        display:"flex",
+                        alignItems:"center",
+                        justifyContent:"center"
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div style={{ display:"flex", gap:10 }}>
             <button type="button" onClick={onClose} disabled={loading} style={{ flex:1, padding:"12px", background:"var(--surface2)", border:"1px solid var(--border2)", color:"var(--text2)", borderRadius:8, cursor:loading?"not-allowed":"pointer", fontFamily:"var(--font)", fontWeight:600, opacity:loading?0.5:1 }}>Cancel</button>
-            <button type="submit" disabled={loading} style={{ flex:2, padding:"12px", background:"var(--accent)", border:"none", color:"#000", borderRadius:8, cursor:loading?"not-allowed":"pointer", fontFamily:"var(--font)", fontWeight:800, fontSize:14, opacity:loading?0.5:1 }}>{loading?"Saving...":"Log Trade"}</button>
+            <button type="submit" disabled={loading} style={{ flex:2, padding:"12px", background:"var(--accent)", border:"none", color:"#fff", borderRadius:8, cursor:loading?"not-allowed":"pointer", fontFamily:"var(--font)", fontWeight:800, fontSize:14, opacity:loading?0.5:1 }}>{loading?"Saving...":"Log Trade"}</button>
           </div>
         </form>
       </div>
@@ -498,44 +696,61 @@ export default function App() {
   const [tab, setTab] = useState("journal");
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
   const [showSignup, setShowSignup] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
 
   const handleLogout = () => {
     signout();
     setIsLoggedIn(false);
     setTab("journal");
+    setShowLoginForm(false);
+    setShowSignup(false);
   };
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setShowSignup(false);
+    setShowLoginForm(false);
   };
 
   const handleSignupSuccess = () => {
     setIsLoggedIn(true);
     setShowSignup(false);
+    setShowLoginForm(false);
   };
 
     return (
     <>
       <style>{globalStyles}</style>
       {!isLoggedIn ? (
-        showSignup ? (
-          <SignupForm 
-            onSignupSuccess={handleSignupSuccess}
-            onBackToLogin={() => setShowSignup(false)}
-          />
-        ) : (
+        showLoginForm ? (
           <LoginForm 
             onLoginSuccess={handleLoginSuccess}
+            onShowSignup={() => {
+              setShowLoginForm(false);
+              setShowSignup(true);
+            }}
+          />
+        ) : showSignup ? (
+          <SignupForm 
+            onSignupSuccess={handleSignupSuccess}
+            onBackToLogin={() => {
+              setShowSignup(false);
+              setShowLoginForm(true);
+            }}
+          />
+        ) : (
+          <HomePage
+            onShowLogin={() => setShowLoginForm(true)}
             onShowSignup={() => setShowSignup(true)}
           />
         )
       ) : (
-        <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
+        <div style={{ minHeight:"100vh", background:"var(--bg)", display:"flex", flexDirection:"column" }}>
           <Nav tab={tab} setTab={setTab} onLogout={handleLogout} />
-          <main style={{ maxWidth:1280, margin:"0 auto", padding:"32px 24px" }}>
+          <main style={{ maxWidth:1280, margin:"0 auto", padding:"32px 24px", flex:1, width:"100%" }}>
             {tab==="journal" ? <JournalTab /> : <CalculatorTab />}
           </main>
+          <Footer />
         </div>
       )}
     </>
